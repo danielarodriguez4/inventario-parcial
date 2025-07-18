@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { API_ROUTES } from '../services/api';
 import axios from 'axios';
+import { API_ROUTES } from '../services/api';
 import '../Estilos/InventoryList.css';
 
 const InventoryList = () => {
@@ -10,34 +10,39 @@ const InventoryList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Obtener lista de almacenes
   useEffect(() => {
     const fetchAlmacenes = async () => {
       try {
         const response = await axios.get(API_ROUTES.LISTAR_ALMACENES);
         setAlmacenes(response.data);
       } catch (err) {
-        setError('Error al cargar los almacenes');
         console.error(err);
+        setError('No se pudieron cargar los almacenes.');
       }
     };
+
     fetchAlmacenes();
   }, []);
+
+  // Consultar productos por almacén
   const consultarProductos = async () => {
     if (!selectedAlmacenId) {
-      setError('Debe seleccionar un almacén');
+      setError('Debe seleccionar un almacén.');
       return;
     }
 
     setLoading(true);
     setError('');
+    setProductos([]);
 
     try {
       const response = await axios.get(API_ROUTES.INVENTARIO_PRODUCTOS(selectedAlmacenId));
       const data = Array.isArray(response.data) ? response.data : [response.data];
       setProductos(data);
     } catch (err) {
-      setError('Error al consultar los productos');
       console.error(err);
+      setError('Ocurrió un error al consultar los productos.');
     } finally {
       setLoading(false);
     }
@@ -52,7 +57,11 @@ const InventoryList = () => {
         <select
           id="almacen"
           value={selectedAlmacenId}
-          onChange={(e) => setSelectedAlmacenId(e.target.value)}
+          onChange={(e) => {
+            setSelectedAlmacenId(e.target.value);
+            setError('');
+            setProductos([]);
+          }}
         >
           <option value="">-- Seleccionar --</option>
           {almacenes.map((almacen) => (
@@ -61,11 +70,12 @@ const InventoryList = () => {
             </option>
           ))}
         </select>
-        <button onClick={consultarProductos}>Consultar Productos</button>
+        <button onClick={consultarProductos} disabled={!selectedAlmacenId || loading}>
+          {loading ? 'Cargando...' : 'Consultar Productos'}
+        </button>
       </div>
 
       {error && <div className="error">{error}</div>}
-      {loading && <div className="loading">Cargando productos...</div>}
 
       {productos.length > 0 && (
         <table className="inventory-table">
@@ -100,6 +110,10 @@ const InventoryList = () => {
             ))}
           </tbody>
         </table>
+      )}
+
+      {!loading && productos.length === 0 && selectedAlmacenId && !error && (
+        <p className="info-message">No hay productos en este almacén.</p>
       )}
     </div>
   );
