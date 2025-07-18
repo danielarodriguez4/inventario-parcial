@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ProductForm.css';
+import { API_ROUTES } from '../services/api';
 
 const ProductForm = () => {
   const [almacenes, setAlmacenes] = useState([]);
@@ -26,7 +27,7 @@ const ProductForm = () => {
   useEffect(() => {
     const fetchAlmacenes = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/almacenes');
+        const response = await axios.get(API_ROUTES.LISTAR_ALMACENES);
         setAlmacenes(response.data);
       } catch (err) {
         setMessage({ type: 'error', text: 'Error al cargar los almacenes' });
@@ -101,7 +102,7 @@ const ProductForm = () => {
         };
 
 
-      await axios.post('http://localhost:8080/api/productos', productData);
+      await axios.post(API_ROUTES.CREAR_PRODUCTO, productData);
       
       setMessage({ type: 'success', text: 'Producto agregado exitosamente' });
       

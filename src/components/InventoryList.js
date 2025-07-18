@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_ROUTES } from '../services/api';
 import axios from 'axios';
 import '../Estilos/InventoryList.css';
 
@@ -12,7 +13,7 @@ const InventoryList = () => {
   useEffect(() => {
     const fetchAlmacenes = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/almacenes');
+        const response = await axios.get(API_ROUTES.LISTAR_ALMACENES);
         setAlmacenes(response.data);
       } catch (err) {
         setError('Error al cargar los almacenes');
@@ -31,7 +32,7 @@ const InventoryList = () => {
     setError('');
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/inventario/productos?almacenId=${selectedAlmacenId}`);
+      const response = await axios.get(API_ROUTES.INVENTARIO_PRODUCTOS(selectedAlmacenId));
       const data = Array.isArray(response.data) ? response.data : [response.data];
       setProductos(data);
     } catch (err) {
