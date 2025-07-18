@@ -87,7 +87,7 @@ const ProductForm = () => {
 
     try {
       // Preparar datos para envío
-      const productData = {
+        const productData = {
         codigo: formData.codigo.trim(),
         nombre: formData.nombre.trim(),
         descripcion: formData.descripcion.trim() || null,
@@ -97,11 +97,9 @@ const ProductForm = () => {
         cantidadMaxima: formData.cantidadMaxima ? parseInt(formData.cantidadMaxima) : null,
         categoria: formData.categoria.trim() || null,
         unidadMedida: formData.unidadMedida.trim() || null,
-        fechaVencimiento: formData.fechaVencimiento || null,
-        almacen: {
-          id: parseInt(formData.almacenId)
-        }
-      };
+        almacenId: parseInt(formData.almacenId)
+        };
+
 
       await axios.post('http://localhost:8080/api/productos', productData);
       
